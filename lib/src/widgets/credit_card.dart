@@ -225,31 +225,18 @@ class _CreditCardState extends State<CreditCard> {
           SizedBox(
             height: 8,
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: CardFormField(
-              inputDecoration: buildInputDecoration(
-                  hintText: widget.locale.nameOnCard,
-                  hideBorder: true,
-                  hintTextDirection: widget.textDirection),
-              keyboardType: TextInputType.text,
-              onChanged: _validateName,
-              onSaved: (value) => _cardData.name = value ?? '',
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp('[a-zA-Z. ]')),
-              ],
-            ),
+          Text("data"),
+          CardFormField(
+            inputDecoration: buildInputDecoration(
+                hintText: widget.locale.nameOnCard,
+                hideBorder: true,
+                hintTextDirection: widget.textDirection),
+            keyboardType: TextInputType.text,
+            onChanged: _validateName,
+            onSaved: (value) => _cardData.name = value ?? '',
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp('[a-zA-Z. ]')),
+            ],
           ),
           SizedBox(
             height: 30,
