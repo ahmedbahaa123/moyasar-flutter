@@ -214,22 +214,10 @@ class _CreditCardState extends State<CreditCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(_nameError ?? widget.locale.nameOnCard,
-              textAlign: widget.textDirection == TextDirection.rtl
-                  ? TextAlign.right
-                  : TextAlign.left,
-              style: TextStyle(
-                fontSize: 16,
-                color: _nameError != null ? Colors.red : Colors.black,
-              )),
-          SizedBox(
-            height: 8,
-          ),
-          Text("data"),
           CardFormField(
             inputDecoration: buildInputDecoration(
                 hintText: widget.locale.nameOnCard,
-                hideBorder: true,
+                hideBorder: false,
                 hintTextDirection: widget.textDirection),
             keyboardType: TextInputType.text,
             onChanged: _validateName,
@@ -239,131 +227,65 @@ class _CreditCardState extends State<CreditCard> {
             ],
           ),
           SizedBox(
-            height: 30,
+            height: 16,
           ),
-          Text(
-              _cardNumberError ??
-                  _expiryError ??
-                  _cvcError ??
-                  widget.locale.cardInformation,
-              textAlign: widget.textDirection == TextDirection.rtl
-                  ? TextAlign.right
-                  : TextAlign.left,
-              style: TextStyle(
-                fontSize: 16,
-                color: (_cardNumberError != null ||
-                    _expiryError != null ||
-                    _cvcError != null)
-                    ? Colors.red
-                    : Colors.black,
-              )),
+          CardFormField(
+            inputDecoration: buildInputDecoration(
+                hintText: widget.locale.cardNumber,
+                hintTextDirection: widget.textDirection,
+                hideBorder: false,
+                addNetworkIcons: true,
+                config: widget.config,
+                detectedNetwork: _detectedNetwork,
+                unsupportedNetwork: _unsupportedNetwork),
+            onChanged: _validateCardNumber,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(16),
+              CardNumberInputFormatter(),
+            ],
+            onSaved: (value) =>
+            _cardData.number = CardUtils.getCleanedNumber(value!),
+          ),
           SizedBox(
-            height: 8,
+            height: 16,
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
+          CardFormField(
+            inputDecoration: buildInputDecoration(
+              hintText: '${widget.locale.expiry} (MM / YY)',
+              hintTextDirection: widget.textDirection,
+              hideBorder: false,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-            child: Column(
-              crossAxisAlignment: widget.textDirection == TextDirection.rtl
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                CardFormField(
-                  inputDecoration: buildInputDecoration(
-                      hintText: widget.locale.cardNumber,
-                      hintTextDirection: widget.textDirection,
-                      hideBorder: true,
-                      addNetworkIcons: true,
-                      config: widget.config,
-                      detectedNetwork: _detectedNetwork,
-                      unsupportedNetwork: _unsupportedNetwork),
-                  onChanged: _validateCardNumber,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(16),
-                    CardNumberInputFormatter(),
-                  ],
-                  onSaved: (value) =>
-                  _cardData.number = CardUtils.getCleanedNumber(value!),
-                ),
-                const Divider(height: 2),
-                Row(
-                  textDirection: widget.textDirection,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: widget.textDirection == TextDirection.rtl
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          CardFormField(
-                            inputDecoration: buildInputDecoration(
-                              hintText: '${widget.locale.expiry} (MM / YY)',
-                              hintTextDirection: widget.textDirection,
-                              hideBorder: true,
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(4),
-                              CardMonthInputFormatter(),
-                            ],
-                            onChanged: _validateExpiry,
-                            onSaved: (value) {
-                              List<String> expireDate = CardUtils.getExpiryDate(
-                                  value!.replaceAll('\u200E', ''));
-                              _cardData.month =
-                                  expireDate.first.replaceAll('\u200E', '');
-                              _cardData.year =
-                                  expireDate[1].replaceAll('\u200E', '');
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 48,
-                      child: VerticalDivider(
-                        color: Colors.grey,
-                        thickness: 1,
-                        width: 2,
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: widget.textDirection == TextDirection.rtl
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          CardFormField(
-                            inputDecoration: buildInputDecoration(
-                              hintText: widget.locale.cvc,
-                              hintTextDirection: widget.textDirection,
-                              hideBorder: true,
-                            ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(4),
-                            ],
-                            onChanged: _validateCVC,
-                            onSaved: (value) => _cardData.cvc = value ?? '',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(4),
+              CardMonthInputFormatter(),
+            ],
+            onChanged: _validateExpiry,
+            onSaved: (value) {
+              List<String> expireDate = CardUtils.getExpiryDate(
+                  value!.replaceAll('\u200E', ''));
+              _cardData.month =
+                  expireDate.first.replaceAll('\u200E', '');
+              _cardData.year =
+                  expireDate[1].replaceAll('\u200E', '');
+            },
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          CardFormField(
+            inputDecoration: buildInputDecoration(
+              hintText: widget.locale.cvc,
+              hintTextDirection: widget.textDirection,
+              hideBorder: false,
             ),
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(4),
+            ],
+            onChanged: _validateCVC,
+            onSaved: (value) => _cardData.cvc = value ?? '',
           ),
           SizedBox(
             height: 8,
@@ -406,14 +328,15 @@ class _CreditCardState extends State<CreditCard> {
                         ),
                         textDirection: widget.textDirection,
                       ),
-                      SizedBox(
-                          width: 16,
-                          child: Image.asset(
-                            'assets/images/saudiriyal.png',
-                            color: Colors.white,
-                            package: 'moyasar',
-                          )),
-                      const SizedBox(width: 4),
+                      Text(
+                        '${"SAR"} ',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        textDirection: widget.textDirection,
+                      ),
                       Text(
                         getAmount(widget.config.amount),
                         style: const TextStyle(
@@ -584,28 +507,36 @@ InputDecoration buildInputDecoration(
     suffixIcon: isRTL ? null : iconWidget,
     prefixIcon: isRTL ? iconWidget : null,
     hintText: hintText,
-    border: hideBorder ? InputBorder.none : defaultEnabledBorder,
+    border:  OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.blue, width: 2.0),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 2.0),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.red, width: 2.0),
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+
     isDense: true,
+    filled: true,
+    fillColor: Colors.grey[50],
     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
     hintTextDirection: hintTextDirection,
   );
 }
 
 void closeKeyboard() => FocusManager.instance.primaryFocus?.unfocus();
-
-BorderRadius defaultBorderRadius = const BorderRadius.all(Radius.circular(8));
-
-OutlineInputBorder defaultEnabledBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.grey[400]!),
-    borderRadius: defaultBorderRadius);
-
-OutlineInputBorder defaultFocusedBorder = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.grey[600]!),
-    borderRadius: defaultBorderRadius);
-
-OutlineInputBorder defaultErrorBorder = OutlineInputBorder(
-    borderSide: const BorderSide(color: Colors.red),
-    borderRadius: defaultBorderRadius);
 
 Color blueColor = Colors.blue[700]!;
 Color lightBlueColor = Colors.blue[100]!;
