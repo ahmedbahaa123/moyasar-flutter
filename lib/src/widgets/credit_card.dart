@@ -441,6 +441,9 @@ class CardFormField extends StatelessWidget {
         validator: validator,
         onSaved: onSaved,
         onChanged: onChanged,
+        style: TextStyle(
+          fontFamily: "RobotoMono",
+        ),
         inputFormatters: inputFormatters,
         textDirection: inputDecoration?.hintTextDirection,
         textAlign: inputDecoration?.hintTextDirection == TextDirection.rtl
