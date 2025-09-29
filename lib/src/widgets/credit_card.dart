@@ -343,6 +343,7 @@ class _CreditCardState extends State<CreditCard> {
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
+                          fontFamily: "RobotoMono"
                         ),
                         textDirection: widget.textDirection,
                       ),
@@ -508,11 +509,11 @@ InputDecoration buildInputDecoration(
     prefixIcon: isRTL ? iconWidget : null,
     hintText: hintText,
     border:  OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
       borderRadius: BorderRadius.circular(8.0),
     ),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
       borderRadius: BorderRadius.circular(8.0),
     ),
     focusedBorder: OutlineInputBorder(
